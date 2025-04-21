@@ -12,6 +12,8 @@ declare module 'vue' {
     CustomeInput: typeof import('./components/CustomeInput.vue')['default']
     CustomeLabel: typeof import('./components/CustomeLabel.vue')['default']
     CustomeSelect: typeof import('./components/CustomeSelect.vue')['default']
+    Form: typeof import('./components/FormComponent.vue')['default']
+    FormComponent: typeof import('./components/FormComponent.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
