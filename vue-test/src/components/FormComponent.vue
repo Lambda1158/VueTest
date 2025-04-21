@@ -21,37 +21,48 @@
 <script setup lang="ts">
   import { reactive } from 'vue'
   import { VSelect, VTextField } from 'vuetify/components'
-  import { FormSchema } from '@/types/index';
-  import { FormField } from '@/types/index'
+  import type { Component } from 'vue'
+  import type { FormField , FormSchema } from '@/types/index'
+  const STORAGE_KEY = 'formData'
+  const storedData = localStorage.getItem(STORAGE_KEY)
 
-
-  // 🟩 Props tipados
+  //  Props tipados
   const props = defineProps<{
     formdata: FormSchema
   }>()
 
-  // 🟦 Valores del form, inicializados con `default`
-  const formValues: Record<string, string> = reactive({})
+  //  Valores del form, inicializados con `default`
+  const formValues: Record<string, string> = reactive(
+    storedData ? JSON.parse(storedData) : {}
+  )
 
-  props.formdata.fields.forEach((field: FormField) => {
-    formValues[field.name] = field.default || ''
-  })
 
-  // 🟪 Tipado del mapping
-  const componentMap: Record<string, any> = {
+  //  Tipado del mapping
+  const componentMap: Record<string, Component> = {
     text: VTextField,
     email: VTextField,
     number: VTextField,
     selectable: VSelect,
   }
 
-  function getVuetifyComponent (type: string): any {
+  function getVuetifyComponent (type: string): Component {
     return componentMap[type] || VTextField
   }
 
-  const emit = defineEmits(['update:modelValue'])
 
-  watch(formValues, newVal => {
-    emit('update:modelValue', newVal)
+  props.formdata.fields.forEach((field: FormField) => {
+    if (!(field.name in formValues)) {
+      formValues[field.name] = field.default || ''
+    }
   })
+
+  watch(
+    () => formValues,
+    newValues => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newValues))
+    },
+    { deep: true }
+  )
+
+
 </script>
