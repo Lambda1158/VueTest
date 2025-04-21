@@ -1,6 +1,6 @@
 <template>
   <v-form>
-    <h2 class="mb-4">{{ props.formdata.formTitle }}</h2>
+    <h4 class="mb-6 text-h4">{{ props.formdata.formTitle }}</h4>
     <v-row>
       <v-col v-for="(field, index) in formdata.fields" :key="index" cols="12">
         <component
@@ -14,6 +14,10 @@
           :required="field.required"
         />
       </v-col>
+    </v-row>
+    <v-row class="d-flex justify-space-between">
+      <v-btn class="flex-grow-1 mx-2" color="primary" size="x-large" @click="clearForm">Limpear Form</v-btn>
+      <v-btn class="flex-grow-1 mx-2" color="primary" size="x-large">Submit</v-btn>
     </v-row>
   </v-form>
 </template>
@@ -48,7 +52,12 @@
   function getVuetifyComponent (type: string): Component {
     return componentMap[type] || VTextField
   }
-
+  function clearForm () {
+    localStorage.removeItem(STORAGE_KEY)
+    Object.keys(formValues).forEach(key => {
+      formValues[key] = ''
+    })
+  }
 
   props.formdata.fields.forEach((field: FormField) => {
     if (!(field.name in formValues)) {
