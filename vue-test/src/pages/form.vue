@@ -17,8 +17,7 @@
       </v-row>
       <v-row>
         <v-col>
-          <h1>Hola este es el form</h1>
-          <FormComponent />
+          <FormComponent :formdata="formData" />
         </v-col>
       </v-row>
     </v-container>
@@ -28,6 +27,7 @@
 <script lang="ts" setup>
   import FormComponent from '@/components/FormComponent.vue';
   import { ref } from 'vue';
-  import formSchema from '@/assets/formSchema.json';
+  import rawSchema from '@/assets/formulatio.json';
   import type { FormSchema } from '@/types/index';
+  const formData = ref (rawSchema as FormSchema);
 </script>
