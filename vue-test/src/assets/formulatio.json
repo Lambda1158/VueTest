@@ -46,7 +46,7 @@
         },
         {
           "type": "regex",
-          "pattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4$",
+          "pattern": "^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
           "message": "El formato del mail es inválido."
         }
       ]

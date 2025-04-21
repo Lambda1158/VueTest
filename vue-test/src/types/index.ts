@@ -1,4 +1,3 @@
-// src/types/form.ts
 export type ValidationType = 'required' | 'minLength' | 'maxLength' | 'regex' | 'complex'
 
 export interface ValidationRule {
@@ -16,12 +15,12 @@ export type FieldType = 'text' | 'email' | 'number' | 'selectable' // Asegúrate
 export interface FormField {
   name: string
   label: string
-  type: FieldType // Usa el tipo específico, no string
+  type: FieldType
   default?: string
   maxLength?: number
   required?: boolean
   validations?: ValidationRule[]
-  options?: string[] // Para campos selectable
+  options?: string[]
 }
 
 export interface FormSchema {
