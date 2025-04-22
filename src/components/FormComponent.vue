@@ -49,13 +49,17 @@
 
   const formRef = ref<InstanceType<typeof VForm> | null>(null)
   const formValid = ref(false)
-  const STORAGE_KEY = 'formData'
-  const storedData = localStorage.getItem(STORAGE_KEY)
-  const dynamicRules: Record<string, ((value: string) => true | string)[]> = reactive({})
+
   //  Traigo el form desde el padre
   const props = defineProps<{
     formdata: FormSchema
   }>()
+
+  const STORAGE_KEY = 'formData'+props.formdata.formTitle.replace(/\s+/g, '')
+  console.log('STORAGE_KEY', STORAGE_KEY)
+  const storedData = localStorage.getItem(STORAGE_KEY)
+  const dynamicRules: Record<string, ((value: string) => true | string)[]> = reactive({})
+
 
   //  Cargo valores del form si existen en el localstorage
   const formValues: Record<string, string> = reactive(
