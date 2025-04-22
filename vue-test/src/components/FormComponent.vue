@@ -25,11 +25,11 @@
 
 <script setup lang="ts">
   import { reactive } from 'vue'
-  import { VSelect, VTextField } from 'vuetify/components'
-  import type { Component } from 'vue'
   import type { FormField , FormSchema } from '@/types/index'
   import { ref } from 'vue'
   import type { VForm } from 'vuetify/components'
+  import getValidationRules from '@/utils'
+  import { getVuetifyComponent } from '@/utils'
 
   const formRef = ref<InstanceType<typeof VForm> | null>(null)
   const formValid = ref(false)
@@ -46,18 +46,13 @@
     storedData ? JSON.parse(storedData) : {}
   )
 
+  props.formdata.fields.forEach((field: FormField) => {
+    if (!(field.name in formValues)) {
+      formValues[field.name] = field.default || ''
+    }
+  })
 
-  //  Tipado del mapping
-  const componentMap: Record<string, Component> = {
-    text: VTextField,
-    email: VTextField,
-    number: VTextField,
-    selectable: VSelect,
-  }
 
-  function getVuetifyComponent (type: string): Component {
-    return componentMap[type] || VTextField
-  }
   function clearForm () {
     localStorage.removeItem(STORAGE_KEY)
     Object.keys(formValues).forEach(key => {
@@ -65,67 +60,17 @@
     })
   }
 
+
   async function submitForm () {
     const result = await formRef.value?.validate()
 
     if (result?.valid) {
       console.log('Formulario válido:', formValues)
+      alert('Formulario válido')
     } else {
       console.log('Formulario inválido')
+      alert('Formulario inválido')
     }
-  }
-
-  props.formdata.fields.forEach((field: FormField) => {
-    if (!(field.name in formValues)) {
-      formValues[field.name] = field.default || ''
-    }
-  })
-
-  function getValidationRules (validations: FormField['validations']) {
-    const rules: ((value: string) => true | string)[] = []
-
-    validations?.forEach(v => {
-      switch (v.type) {
-        case 'required':
-          rules.push(value => !!value || v.message)
-          break
-
-        case 'minLength':
-          rules.push(value =>
-            value.length >= (v.value || 0) || v.message
-          )
-          break
-
-        case 'maxLength':
-          rules.push(value =>
-            value.length <= (v.value || 9999) || v.message
-          )
-          break
-
-        case 'regex':
-          try {
-            const regex = new RegExp(v.pattern)
-            rules.push((value: string) => {
-              if (typeof value !== 'string') return v.message
-              return regex.test(value) || v.message
-            })
-          } catch (e) {
-            console.warn('Regex inválido:', v.pattern)
-          }
-          break
-
-        case 'complex':
-          if (v.rules?.noNumbers) {
-            rules.push(value => !/\d/.test(value) || v.message)
-          }
-          break
-
-        default:
-          break
-      }
-    })
-
-    return rules
   }
 
 
@@ -136,6 +81,5 @@
     },
     { deep: true }
   )
-
 
 </script>
