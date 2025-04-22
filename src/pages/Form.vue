@@ -1,10 +1,7 @@
 <template>
-  <section class="pa-10 overflow-y-auto overflow-x-hidden h-screen">
-    <v-container class="d-flex justify-center align-center ">
-      <v-col class="align-center justify-center">
-        <FormComponent :formdata="formData" />
-      </v-col>
-    </v-container>
+  <section class="pa-10 overflow-y-auto">
+    <h1 class="text-h3">Esta seccion tiene el formulario</h1>
+    <FormComponent :formdata="formData" />
   </section>
 </template>
 

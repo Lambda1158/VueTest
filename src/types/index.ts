@@ -12,7 +12,7 @@ export interface ValidationRule {
   }
 }
 
-export type FieldType = 'text' | 'email' | 'number' | 'selectable' // Asegúrate que coincida con tu JSON
+export type FieldType = 'text' | 'email' | 'number' | 'selectable'
 
 export interface FormField {
   name: string
