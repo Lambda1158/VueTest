@@ -1,5 +1,5 @@
 <template>
-  <v-form ref="formRef" v-model="formValid">
+  <v-form ref="formRef" v-model="formValid" class="overflow-y-auto overflow-x-hidden pa-2">
     <h4 class="mb-6 text-h4">{{ props.formdata.formTitle }}</h4>
     <v-row>
       <v-col v-for="(field, index) in formdata.fields" :key="index" cols="12">
@@ -12,7 +12,7 @@
           :maxlength="field.maxLength"
           outlined
           :required="field.required"
-          :rules="getValidationRules(field.validations)"
+          :rules="getValidationRules(field.validations, formValues)"
         />
       </v-col>
     </v-row>
@@ -28,14 +28,14 @@
   import type { FormField , FormSchema } from '@/types/index'
   import { ref } from 'vue'
   import type { VForm } from 'vuetify/components'
-  import getValidationRules from '@/utils'
+  import { getValidationRules } from '@/utils'
   import { getVuetifyComponent } from '@/utils'
 
   const formRef = ref<InstanceType<typeof VForm> | null>(null)
   const formValid = ref(false)
   const STORAGE_KEY = 'formData'
   const storedData = localStorage.getItem(STORAGE_KEY)
-
+  const dynamicRules: Record<string, ((value: string) => true | string)[]> = reactive({})
   //  Props tipados
   const props = defineProps<{
     formdata: FormSchema
@@ -52,6 +52,28 @@
     }
   })
 
+  props.formdata.fields.forEach(field => {
+    field.validations?.forEach(v => {
+      if (v.type === 'cross' && v.dependsOn && v.condition) {
+        watch(
+          () => formValues[v.dependsOn],
+          val => {
+            const conditionMet = eval(`(value) => ${v.condition}`)(val)
+
+            if (conditionMet) {
+              dynamicRules[field.name] = [
+                ...(dynamicRules[field.name] || []),
+                (value: string) => !!value || v.message,
+              ]
+            } else {
+              dynamicRules[field.name] = []
+            }
+          },
+          { immediate: true }
+        )
+      }
+    })
+  })
 
   function clearForm () {
     localStorage.removeItem(STORAGE_KEY)
@@ -63,13 +85,16 @@
 
   async function submitForm () {
     const result = await formRef.value?.validate()
-
     if (result?.valid) {
-      console.log('Formulario válido:', formValues)
-      alert('Formulario válido')
-    } else {
-      console.log('Formulario inválido')
-      alert('Formulario inválido')
+      try {
+        // Simular error random
+        if (Math.random() < 0.5) throw new Error('Simulación de fallo')
+
+        console.log('Formulario enviado con éxito:', formValues)
+      } catch (err) {
+        console.error('Error al enviar:', err)
+        alert('Error al enviar formulario. Intente de nuevo.')
+      }
     }
   }
 

@@ -1,6 +1,7 @@
 <template>
   <v-footer
     app
+    class="bg-deep-purple"
     height="40"
   >
     <a

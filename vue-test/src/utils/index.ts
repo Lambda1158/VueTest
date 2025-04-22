@@ -2,7 +2,11 @@ import type { FormField } from '@/types/'
 import { VSelect, VTextField } from 'vuetify/components'
 import type { Component } from 'vue'
 
-export default function getValidationRules (validations: FormField['validations']) {
+
+export function getValidationRules (
+  validations: FormField['validations'],
+  formValues: Record<string, string>
+) {
   const rules: ((value: string) => true | string)[] = []
 
   validations?.forEach(v => {
@@ -22,10 +26,7 @@ export default function getValidationRules (validations: FormField['validations'
       case 'regex':
         try {
           const regex = new RegExp(v.pattern)
-          rules.push((value: string) => {
-            if (typeof value !== 'string') return v.message
-            return regex.test(value) || v.message
-          })
+          rules.push(value => regex.test(value) || v.message)
         } catch (e) {
           console.warn('Regex inválido:', v.pattern)
         }
@@ -37,6 +38,19 @@ export default function getValidationRules (validations: FormField['validations'
         }
         break
 
+      case 'cross':
+        rules.push(value => {
+          const relatedValue = formValues[v.dependsOn]
+          try {
+            const conditionFn = new Function('value', 'relatedValue', `return ${v.condition}`)
+            return conditionFn(value, relatedValue) || v.message
+          } catch (err) {
+            console.error('Error evaluando validación cruzada:', err)
+            return 'Error en validación cruzada'
+          }
+        })
+        break
+
       default:
         break
     }
@@ -46,7 +60,7 @@ export default function getValidationRules (validations: FormField['validations'
 }
 
 //  Tipado del mapping
-export const componentMap: Record<string, Component> = {
+const componentMap: Record<string, Component> = {
   text: VTextField,
   email: VTextField,
   number: VTextField,

@@ -1,10 +1,12 @@
-export type ValidationType = 'required' | 'minLength' | 'maxLength' | 'regex' | 'complex'
+export type ValidationType = 'required' | 'minLength' | 'maxLength' | 'regex' | 'complex' | 'cross'
 
 export interface ValidationRule {
   type: ValidationType
   message: string
   value?: number
   pattern?: string
+  dependsOn?: string
+  condition?: string
   rules?: {
     noNumbers?: boolean
   }
