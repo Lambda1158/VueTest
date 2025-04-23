@@ -20,7 +20,7 @@
         },
         {
           "type": "regex",
-          "pattern": "^[a-zAZáéíóúÁÉÍÓÚ\\s]+$",
+          "pattern": "^[a-zA-ZáéíóúÁÉÍÓÚ\\s]+$",
           "message": "El nombre solo puede contener letras y espacios."
         },
         {
